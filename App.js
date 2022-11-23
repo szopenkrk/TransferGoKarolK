@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,22 +7,17 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
-import { SelectList } from 'react-native-dropdown-select-list'
+import { SelectList } from 'react-native-dropdown-select-list';
+import DropDownPicker from 'react-native-dropdown-picker';
+import currencies from './currencies.json';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const App = () => {
   const [numberFrom, onChangeNumberFrom] = React.useState("");
   const [numberTo, onChangeNumberTo] = React.useState("");
   const [amount, onChangeAmount] = React.useState("0");
-
-  const data = [
-    {key:'1', value:'Mobiles', disabled:true},
-    {key:'2', value:'Appliances'},
-    {key:'3', value:'Cameras'},
-    {key:'4', value:'Computers', disabled:true},
-    {key:'5', value:'Vegetables'},
-    {key:'6', value:'Diary Products'},
-    {key:'7', value:'Drinks'},
-  ];
+  const [open, setOpen] = useState(false);
+  const curr = currencies.map(a => { return {key: a.cc, value: a.cc}});
 
   const callApi = async (from, to, amount) => {
     try {
@@ -33,50 +28,65 @@ const App = () => {
       console.error(error);
     }
   }
-
+  console.log('ASD', currencies.map(a => { return {key: a.cc, value: a.cc}}));
+  const [items, setItems] = useState(curr);
   return (
-    <SafeAreaView>
-      <View tyle={{ height: '100%', backgroundColor: 'powderblue'}}>
-        <View style={styles.row}>
-          <View style={styles.inputWrap}>
-            <SelectList
-              style={styles.input} 
-              setSelected={(val) => onChangeNumberFrom(val)} 
-              data={data} 
-              save="value"
+    <>
+      <SafeAreaView>
+        <View tyle={{ height: '100%',}}>
+          <View style={styles.row}>
+            <View style={styles.inputWrap}>
+              <SelectList
+                style={styles.input, {zIndex: 100}} 
+                maxHeight='200'
+                data={currencies.map(a => { return {key: a.cc, value: a.cc}})}
+                dropDownDirection="TOP"
+                theme="LIGHT"
+                listMode="SCROLLVIEW"
+                onSelect={(selectedItem, index) => {
+                  console.log(selectedItem, index)
+                }}
+                buttonTextAfterSelection={(selectedItem, index) => {
+                  return selectedItem
+                }}
+                rowTextForSelection={(item, index) => {
+                  return item
+                }}
+              />
+            </View>
+            <Icon.Button name="swap_horiz" backgroundColor="#3b5998"></Icon.Button>
+            <View style={styles.inputWrap}>
+            <DropDownPicker
+              open={open}
+              items={items}
+              theme="DARK"
+              listMode="FLATLIST"
+              setItems={setItems}
+              setOpen={setOpen}
             />
+            </View>
           </View>
-          <View style={styles.inputWrap}>
-            <SelectList
-              style={styles.input} 
-              setSelected={(val) => onChangeNumberTo(val)} 
-              data={data} 
-              save="value"
-            />
+          <View style={styles.row, {marginTop: 80}}>
+              <TextInput
+                style={styles.input}
+                onChangeText={onChangeAmount}
+                value={amount}
+                placeholder="0"
+                keyboardType="numeric"
+              />
+          </View>
+          <View>
+          <TouchableOpacity 
+            style={styles.convertButton} 
+            title="Convert" 
+            onPress={()=> callApi('USD', 'PLN', '100')}
+          >
+            <Text style={styles.convertText}>Convert</Text>
+          </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.row, {marginTop: 80}}>
-            <TextInput
-              style={styles.input}
-              onChangeText={onChangeAmount}
-              value={amount}
-              placeholder="0"
-              keyboardType="numeric"
-            />
-        </View>
-        <View>
-        <TouchableOpacity 
-          style={styles.convertButton} 
-          title="Convert" 
-          onPress={()=> callApi('USD', 'PLN', '100')}
-        >
-          <Text style={styles.convertText}>Convert</Text>
-        </TouchableOpacity>
-        </View>
-      </View>
-      
-      
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 };
 
@@ -89,6 +99,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   inputWrap: {
+    margin: 10,
     flex: 1,
     height: 80,
     borderColor: "#cccccc",
@@ -101,13 +112,12 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   convertButton: {
-    backgroundColor:'#1E6738',
+    backgroundColor:'#32CD32',
     marginRight:40,
     marginLeft:40,
     marginTop:10,
     paddingTop:10,
     paddingBottom:10,
-    backgroundColor:'#1E6738',
     borderWidth: 1,
     borderColor: '#fff'
   },
