@@ -20,7 +20,7 @@ const App = () => {
   const [openTo, setOpenTo] = useState(false);
   const [convertedTo, setConvertedTo] = useState(""); 
   const [rate, setupRate] = useState("");
-  const curr = currencies.map(a => { return {label: a.cc, value: a.cc}});
+  const curr = currencies.map(a => { return {label: a.cc, value: a.cc,  icon: () => <Image source={{ uri: `asset:/ic_flag_${a.cc}` }} style={styles.iconStyle} />}});
   const [items, setItems] = useState(curr);
   const [visibility, setVisibility] = useState(true);
 
@@ -43,10 +43,11 @@ const App = () => {
   return (
     <>
       <SafeAreaView>
-        <View >
-          <View style={styles.row}>
+        <View style={styles.container}>
+          <View style={[styles.row, {flexWrap: 'nowrap'}]}>
             <View style={styles.inputWrap}>
-            <DropDownPicker
+            <Text style={{height: 10, color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: 5, marginLeft: 10}}>FROM</Text>
+              <DropDownPicker
                 placeholder="Select"
                 open={openFrom}
                 value={numberFrom}
@@ -58,9 +59,10 @@ const App = () => {
               />
             </View>
             <View style={styles.swapbuttonrow}>
-            <Icon.Button name="swap-horiz" size={30} color="#00BFFF" backgroundColor="#ffffff"/>
+              <Icon.Button name="swap-horiz" size={30} color="#00BFFF" backgroundColor="#ffffff"/>
             </View>
             <View style={styles.inputWrap}>
+            <Text style={{height: 10, color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: 5, marginLeft: 10}}>TO</Text>
               <DropDownPicker
                 placeholder="Select"
                 open={openTo}
@@ -73,21 +75,19 @@ const App = () => {
               />
             </View>
           </View>
-          {/* Hidden element after search data */}
           { visibility &&
           <>
-          <View style={styles.row, {marginTop: 80, zIndex: -1}}>
+           <View style={[{marginTop: 90, zIndex: -1, width: '90%'}]}>
+              <Text style={{color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: -10, marginLeft: 0}}>AMOUNT</Text>
               <TextInput
                 style={styles.input}
                 onChangeText={onChangeAmount}
                 value={amount}
-                placeholder="0"
                 keyboardType="numeric"
               />
           </View>
-          <View style={{zIndex: -1}}>
+          <View style={[{width: '100%', zIndex: -1}]}>
             <TouchableOpacity 
-              zIndex="0"
               style={styles.convertButton} 
               title="Convert" 
               onPress={()=> callApi(numberFrom, numberTo, amount)}
@@ -100,32 +100,25 @@ const App = () => {
           {/* Results */}
           { rate && 
           <>
-            <View style={styles.row, {marginTop: 70}}>
-              <Text style={{width: '80%', padding: 10}}>{amount}{numberFrom} = {rate} {numberTo}</Text>
-            </View>
-            <View style={styles.row}>
+          <View style={[styles.row, {flexWrap: 'nowrap', marginTop: 100, flex: 3, zIndex: -1}]}>
               <View style={styles.inputWrap}>
-              <TextInput
-                  style={styles.input, {zIndex: -1} }
-                  value={amount}
-                  keyboardType="numeric"
-                />
+                <Text style={styles.inputCalculation}>{amount}{numberFrom}</Text>
 
               </View>
               <View style={styles.inputWrap}>
-              <TextInput
-                  style={styles.input, {zIndex: -1}}
-                  value={convertedTo}
-                />
+                <Text style={styles.inputCalculation}>{convertedTo}{numberTo}</Text>
               </View>
             </View>
-           
-            {/* <View>
+            <View style={{minHeight: 60, textAlign: 'left'}}>
+              <Text style={{width: '80%', padding: 0, marginBottom: 10, textAlign: 'left', left: 0, alignItems: 'flex-start', zIndex: -1}}>{amount}{numberFrom} = {rate} {numberTo}</Text>
+            </View>
+            <View style={styles.row, {marginTop: 30}}>
               <Text>All figures are live mid-market rates, which are for information purpose only. To see the rates from money transfer, please select sending money option. </Text>
-            </View> */}
+            </View>
           </>
           }
         </View>
+        
       </SafeAreaView>
     </>
   );
@@ -133,31 +126,61 @@ const App = () => {
 
 const styles = StyleSheet.create({
   container: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 3,
+    borderColor: 'rgba(0,0,0,0.2)',
+  },
+  row: {
     flex: 1,
-    padding: 24,
-    backgroundColor: "#eaeaea"
+    flexDirection: "row"
+  },
+  rowWithSummary: {
+    height: 80,
+    flex: 1,
+    marginTop: 100,
+    flexDirection: 'row',
+    alignContent: 'flex-start',
+
   },
   input: {
+    padding: 10,
+    fontSize: 18,
+    borderRadius: 6,
+    borderBottomColor: '#000',
+    borderBottomWidth: 2,
+    alignSelf: 'stretch',
+    flexDirection: 'row',
     height: 40,
-    margin: 12,
+    width: '100%',
+    marginTop: 12,
+    marginBottom: 12,
     borderWidth: 1,
     padding: 10,
+  },
+  inputCalculation: {
+    padding: 10,
+    fontSize: 18,
+    borderBottomWidth: 2,
+    flexDirection: 'row',
+    height: 40,
+    width: '48%',
   },
   inputWrap: {
     margin: 10,
     flex: 1,
-    height: 80,
     marginBottom: 10
   },
-  row: {
-    height: 80,
-    flex: 1,
-    flexDirection: "row"
-  },
+  
   swapbuttonrow:{
     height: 50,
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: 30,
     backgroundColor: 'white'
   },
   convertButton: {
@@ -169,7 +192,6 @@ const styles = StyleSheet.create({
     paddingBottom:10,
     borderWidth: 1,
     borderColor: '#fff',
-    zIndex: -1
   },
   convertText: {
     color:'#fff',
@@ -181,7 +203,7 @@ const styles = StyleSheet.create({
     width: '100%', 
     height: 200,
     resizeMode : 'contain' 
-  }
+  },
   
 });
 
