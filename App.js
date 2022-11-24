@@ -103,16 +103,15 @@ const App = () => {
           <View style={[styles.row, {flexWrap: 'nowrap', marginTop: 100, flex: 3, zIndex: -1}]}>
               <View style={styles.inputWrap}>
                 <Text style={styles.inputCalculation}>{amount}{numberFrom}</Text>
-
               </View>
               <View style={styles.inputWrap}>
                 <Text style={styles.inputCalculation}>{convertedTo}{numberTo}</Text>
               </View>
             </View>
-            <View style={{minHeight: 60, textAlign: 'left'}}>
+            <View style={{minHeight: 60, textAlign: 'left', zIndex: -1}}>
               <Text style={{width: '80%', padding: 0, marginBottom: 10, textAlign: 'left', left: 0, alignItems: 'flex-start', zIndex: -1}}>{amount}{numberFrom} = {rate} {numberTo}</Text>
             </View>
-            <View style={styles.row, {marginTop: 30}}>
+            <View style={styles.row, {marginTop: 30, zIndex: -1}}>
               <Text>All figures are live mid-market rates, which are for information purpose only. To see the rates from money transfer, please select sending money option. </Text>
             </View>
           </>
