@@ -20,7 +20,7 @@ const App = () => {
   const [openTo, setOpenTo] = useState(false);
   const [convertedTo, setConvertedTo] = useState(""); 
   const [rate, setupRate] = useState("");
-  const curr = currencies.map(a => { return {label: a.cc, value: a.cc,  icon: () => <Image source={{ uri: `asset:/ic_flag_${a.cc}` }} style={styles.iconStyle} />}});
+  const curr = currencies.map(a => { return {key:a.currencyCode ,label: a.currencyCode, value: a.currencyCode,  icon: () => <Image source={{ uri: a.countryCode }} style={{width: 38, height: 38}} />}});
   const [items, setItems] = useState(curr);
   const [visibility, setVisibility] = useState(true);
 
@@ -33,7 +33,6 @@ const App = () => {
     try {
       const response = await fetch(`https://my.transfergo.com/api/fx-rates?from=${from}&to=${to}&amount=${amount}`);
       const json = await response.json();
-      console.log(json);
       setConvertedTo(json.toAmount);
       setupRate(json.rate);
     }catch (error) {
@@ -51,7 +50,9 @@ const App = () => {
                 placeholder="Select"
                 open={openFrom}
                 value={numberFrom}
-                items={items}
+                containerStyle={{height: 80}}
+                style={{height: 50, borderWidth: 0, width: '40%'}}
+                items={curr}
                 listMode="FLATLIST"
                 setValue={setNumberFrom}
                 setOpen={setOpenFrom}
@@ -67,6 +68,8 @@ const App = () => {
                 placeholder="Select"
                 open={openTo}
                 value={numberTo}
+                containerStyle={{height: 80}}
+                style={{height: 50, borderWidth: 0}}
                 items={items}
                 listMode="FLATLIST"
                 setValue={setNumberTo}
@@ -77,10 +80,11 @@ const App = () => {
           </View>
           { visibility &&
           <>
-           <View style={[{marginTop: 90, zIndex: -1, width: '90%'}]}>
-              <Text style={{color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: -10, marginLeft: 0}}>AMOUNT</Text>
+           <View style={[{marginTop: 90, zIndex: -1, width: '95%',}]}>
+              <Text style={{color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: -10, marginLeft: 10,}}>AMOUNT</Text>
               <TextInput
-                style={styles.input}
+                underlineColorAndroid ='transparent'
+                style={[styles.inputAmount, {borderWidth: 0}]}
                 onChangeText={onChangeAmount}
                 value={amount}
                 keyboardType="numeric"
@@ -100,18 +104,23 @@ const App = () => {
           {/* Results */}
           { rate && 
           <>
+          {/* CALCULATIONS */}
           <View style={[styles.row, {flexWrap: 'nowrap', marginTop: 100, flex: 3, zIndex: -1}]}>
               <View style={styles.inputWrap}>
-                <Text style={styles.inputCalculation}>{amount}{numberFrom}</Text>
+              <Text style={{color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: -10, marginLeft: 10,}}>AMOUNT:</Text>
+              <Text style={styles.inputCalculation}> {amount} {numberFrom}</Text>
               </View>
-              <View style={styles.inputWrap}>
-                <Text style={styles.inputCalculation}>{convertedTo}{numberTo}</Text>
+              <View style={[styles.inputWrap, {borderBottom: '1 solid black'}]}>
+                <Text style={{color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: -10, marginLeft: 10,}}>CONVERTED TO:</Text>
+                <Text style={styles.inputCalculation}>{convertedTo} {numberTo}</Text>
               </View>
             </View>
-            <View style={{minHeight: 60, textAlign: 'left', zIndex: -1}}>
-              <Text style={{width: '80%', padding: 0, marginBottom: 10, textAlign: 'left', left: 0, alignItems: 'flex-start', zIndex: -1}}>{amount}{numberFrom} = {rate} {numberTo}</Text>
+            {/* RATE */}
+            <View style={{marginTop: 60, marginLeft: 20, width: '90%', height: 60, zIndex: -1, justifyContent: 'flex-start', alignItems: 'flex-start', alignContent: 'flex-start',}}>
+              <Text style={{fontSize: 14, width: '80%', padding: 0, marginBottom: 10, left: 0, alignItems: 'flex-start', zIndex: -1}}>{'\u2022'}{amount}{numberFrom} = {rate} {numberTo}</Text>
             </View>
-            <View style={styles.row, {marginTop: 30, zIndex: -1}}>
+            {/* INFO */}
+            <View style={styles.row, {marginTop: 0, marginLeft: 20, zIndex: -1}}>
               <Text>All figures are live mid-market rates, which are for information purpose only. To see the rates from money transfer, please select sending money option. </Text>
             </View>
           </>
@@ -127,9 +136,6 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignContent: 'center',
     borderRadius: 16,
     padding: 16,
     borderWidth: 3,
@@ -147,14 +153,36 @@ const styles = StyleSheet.create({
     alignContent: 'flex-start',
 
   },
+  inputAmount: {
+    width: '90%', 
+    marginLeft: 10, 
+    padding: 10,
+    fontSize: 18,
+    borderBottomWidth: 1,
+    lignSelf: 'stretch',
+    flexDirection: 'row',
+    alignContent: 'center',
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    alignContent: 'center',
+    borderBottom: 1,
+    height: 40,
+    width: '100%',
+    marginTop: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
   input: {
     padding: 10,
     fontSize: 18,
     borderRadius: 6,
     borderBottomColor: '#000',
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     alignSelf: 'stretch',
     flexDirection: 'row',
+    alignContent: 'center',
+    justifyContent: 'center', alignItems: 'center', alignContent: 'center',
     height: 40,
     width: '100%',
     marginTop: 12,
