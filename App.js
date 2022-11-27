@@ -11,6 +11,7 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 import currencies from './currencies.json';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { grey } from 'chalk';
 
 const App = () => {
   const [numberFrom, setNumberFrom] = React.useState("");
@@ -39,19 +40,27 @@ const App = () => {
       console.error(error);
     }
   }
+
+  const swapFromTo = () => {
+    let oF = numberFrom;
+    let oT = numberTo;
+    setNumberFrom(oT);
+    setNumberTo(oF);
+  }
+
   return (
     <>
       <SafeAreaView>
         <View style={styles.container}>
           <View style={[styles.row, {flexWrap: 'nowrap'}]}>
-            <View style={styles.inputWrap}>
+            <View style={[styles.inputWrap, {flex: 1.2}]}>
             <Text style={{height: 10, color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: 5, marginLeft: 10}}>FROM</Text>
               <DropDownPicker
                 placeholder="Select"
                 open={openFrom}
                 value={numberFrom}
                 containerStyle={{height: 80}}
-                style={{height: 50, borderWidth: 0, width: '40%'}}
+                style={{height: 50, borderWidth: 0,}}
                 items={curr}
                 listMode="FLATLIST"
                 setValue={setNumberFrom}
@@ -60,9 +69,9 @@ const App = () => {
               />
             </View>
             <View style={styles.swapbuttonrow}>
-              <Icon.Button name="swap-horiz" size={30} color="#00BFFF" backgroundColor="#ffffff"/>
+              <Icon.Button name="swap-horiz" size={30} color="#00BFFF" backgroundColor="#ffffff" onPress={() => swapFromTo()}/>
             </View>
-            <View style={styles.inputWrap}>
+            <View style={[styles.inputWrap, {flex: 1.2}]}>
             <Text style={{height: 10, color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: 5, marginLeft: 10}}>TO</Text>
               <DropDownPicker
                 placeholder="Select"
@@ -81,8 +90,11 @@ const App = () => {
           { visibility &&
           <>
            <View style={[{marginTop: 90, zIndex: -1, width: '95%',}]}>
-              <Text style={{color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: -10, marginLeft: 10,}}>AMOUNT</Text>
+              <Text style={{color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: -10, marginLeft: 10}}>
+                  AMOUNT
+              </Text>
               <TextInput
+                // right={<Text style={{color: '#000'}}>ASD</Text>}
                 underlineColorAndroid ='transparent'
                 style={[styles.inputAmount, {borderWidth: 0}]}
                 onChangeText={onChangeAmount}
@@ -105,22 +117,22 @@ const App = () => {
           { rate && 
           <>
           {/* CALCULATIONS */}
-          <View style={[styles.row, {flexWrap: 'nowrap', marginTop: 100, flex: 3, zIndex: -1}]}>
-              <View style={styles.inputWrap}>
-              <Text style={{color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: -10, marginLeft: 10,}}>AMOUNT:</Text>
-              <Text style={styles.inputCalculation}> {amount} {numberFrom}</Text>
+          <View style={[styles.row, {flexWrap: 'nowrap', marginTop: 100, flex: 1, zIndex: -1}]}>
+              <View style={[styles.inputWrap, {minWidth: 150}]}>
+                <Text style={{color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: -10, marginLeft: 10,}}>AMOUNT:</Text>
+                <Text style={styles.inputCalculation}> {amount} {numberFrom}</Text>
               </View>
-              <View style={[styles.inputWrap, {borderBottom: '1 solid black'}]}>
+              <View style={[styles.inputWrap, {minWidth: 150 }]}>
                 <Text style={{color: 'black', fontWeight: 'bold', fontSize: 10, marginBottom: -10, marginLeft: 10,}}>CONVERTED TO:</Text>
                 <Text style={styles.inputCalculation}>{convertedTo} {numberTo}</Text>
               </View>
             </View>
             {/* RATE */}
             <View style={{marginTop: 60, marginLeft: 20, width: '90%', height: 60, zIndex: -1, justifyContent: 'flex-start', alignItems: 'flex-start', alignContent: 'flex-start',}}>
-              <Text style={{fontSize: 14, width: '80%', padding: 0, marginBottom: 10, left: 0, alignItems: 'flex-start', zIndex: -1}}>{'\u2022'}{amount}{numberFrom} = {rate} {numberTo}</Text>
+              <Text style={{fontSize: 14, width: '80%', padding: 0, marginBottom: 10, left: 0, alignItems: 'flex-start', zIndex: -1}}>{'\u2022'}{amount} {numberFrom} = {rate} {numberTo}</Text>
             </View>
             {/* INFO */}
-            <View style={styles.row, {marginTop: 0, marginLeft: 20, zIndex: -1}}>
+            <View style={styles.row, {marginTop: 0, marginLeft: 20, marginRight: 20, zIndex: -1}}>
               <Text>All figures are live mid-market rates, which are for information purpose only. To see the rates from money transfer, please select sending money option. </Text>
             </View>
           </>
@@ -142,7 +154,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0,0,0,0.2)',
   },
   row: {
-    flex: 1,
+    flex: 1.6,
     flexDirection: "row"
   },
   rowWithSummary: {
@@ -199,11 +211,10 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   inputWrap: {
-    margin: 10,
-    flex: 1,
+    margin: 5,
+    flex: 1.3,
     marginBottom: 10
   },
-  
   swapbuttonrow:{
     height: 50,
     textAlign: 'center',
